@@ -62,6 +62,21 @@ export default class Settings extends EventTarget {
             value: 'frontend@classic-light'
         };
 
+        this.language = {
+            label: 'Language ⁽¹⁾',
+            description: [
+                'Select the language that should be used for the manga download engine.',
+                '',
+                '⁽¹⁾ Restart required to take affect'
+            ].join('\n'),
+            input: types.select,
+            options: [
+                { value: 'en', name: 'English (English)' },
+                { value: 'hu', name: 'Magyar (Hungarian)' }
+            ],
+            value: 'en'
+        };
+
         this.readerEnabled = {
             label: 'Enable Reader',
             description: 'Show a preview panel and a basic reader for the chapters',
@@ -292,13 +307,17 @@ export default class Settings extends EventTarget {
 
     *_getCategorizedSettings() {
         yield {
+            id: 'general',
             category: 'General',
+            settingKeys: Object.keys(this),
             settings: [...this]
         };
         for (let connector of Engine.Connectors) {
             if (connector.config instanceof Object) {
                 yield {
+                    id: connector.id,
                     category: connector.label,
+                    settingKeys: Object.keys(connector.config),
                     settings: Object.keys(connector.config).map(key => connector.config[key])
                 };
             }
